@@ -3,15 +3,15 @@ import { fetchUsers } from "../services/http";
 import Navbar from "../components/Navbar";
 
 const DashboardPage: React.FC = () => {
-  const [users, setUsers] = useState<any[]>([]); // Array to store user data
+  const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
     const getUsers = async () => {
       try {
         const userData = await fetchUsers();
-        setUsers(userData); // Setting the fetched user data to the state
+        setUsers(userData); 
       } catch (error) {
-        // Handle error if needed
+     
         console.error("Error fetching users:", error);
       }
     };

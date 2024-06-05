@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
 
   const handleSignOut = () => {
     dispatch(signOut());
-    history("/"); //
+    history("/"); 
   };
 
   return (
