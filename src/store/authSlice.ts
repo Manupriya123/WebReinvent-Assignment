@@ -32,10 +32,14 @@ const authSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    signOut(state) {
+      state.token = null;
+      state.error = null;
+    },
   },
 });
 
-export const { setLoading, setUser, setError } = authSlice.actions;
+export const { setLoading, setUser, setError, signOut } = authSlice.actions;
 
 export const loginUser = (email: string, password: string): AppThunk => async (dispatch) => {
   dispatch(setLoading());
