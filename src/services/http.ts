@@ -1,13 +1,13 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "https://reqres.in/api",
-});
+const API_URL = "https://reqres.in/api";
 
-export const login = (email: string, password: string) =>
-  api.post("/login", { email, password });
-export const register = (email: string, password: string) =>
-  api.post("/register", { email, password });
-export const fetchUsers = () => api.get("/users");
+export const registerUser = async (email: string, password: string) => {
+  const response = await axios.post(`${API_URL}/register`, { email, password });
+  return response.data;
+};
 
-export default api;
+export const loginUser = async (email: string, password: string) => {
+  const response = await axios.post(`${API_URL}/login`, { email, password });
+  return response.data;
+};

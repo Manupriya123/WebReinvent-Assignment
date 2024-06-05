@@ -6,12 +6,16 @@ interface CardProps {
   footer: React.ReactNode;
 }
 
-const Card: React.FC<CardProps> = ({ header, body, footer }) => (
-  <div className="border rounded shadow-md">
-    <div className="border-b p-4">{header}</div>
-    <div className="p-4">{body}</div>
-    <div className="border-t p-4">{footer}</div>
-  </div>
-);
+const Card: React.FC<CardProps> = ({ header, body, footer }) => {
+  return (
+    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="px-6 py-4">
+        <div className="font-bold text-xl mb-2">{header}</div>
+        <p className="text-gray-700 text-base">{body}</p>
+      </div>
+      <div className="px-6 pt-4 pb-2">{footer}</div>
+    </div>
+  );
+};
 
 export default Card;

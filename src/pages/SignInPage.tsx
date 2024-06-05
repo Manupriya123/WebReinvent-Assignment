@@ -1,59 +1,64 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../store/authSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { AppDispatch } from "../store";
+import { loginUser } from "../store/authSlice";
+import FormInput from "../components/FormInput";
+import Card from "../components/Card";
 
 const SignInPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
-  // const handleSignIn = async () => {
-  //   setLoading(true);
-  //   try {
-  //     await dispatch(login(email, password));
-  //     // Handle successful login if needed
-  //   } catch (error) {
-  //   console.log(error)
-  //     // setError(error.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const handleSignIn = async () => {
+    try {
+      await dispatch(loginUser(email, password));
+      navigate("/dashboard"); // Navigate to the dashboard page upon successful login
+    } catch (error) {
+      // Handle login failure if needed
+      console.error("Login failed:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col items-center">
-        <h1 className="text-2xl font-bold mb-4">Sign In</h1>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          id="email"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          id="password"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button
-          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          type="button"
-          // onClick={handleSignIn}
-          disabled={loading}
-        >
-          {loading ? "Signing In..." : "Sign In"}
-        </button>
-      </div>
+      <Card
+        header={<h1 className="text-2xl font-bold">Sign In</h1>}
+        body={
+          <>
+            <FormInput
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <FormInput
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </>
+        }
+        footer={
+          <>
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleSignIn}
+            >
+              Sign In
+            </button>
+            <div className="mt-4">
+              <span>Don't have an account? </span>
+              <Link to="/signup" className="text-blue-500">
+                Sign Up
+              </Link>
+            </div>
+          </>
+        }
+      />
     </div>
   );
 };

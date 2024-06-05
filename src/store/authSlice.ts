@@ -1,108 +1,64 @@
-// src/redux/authSlice.ts
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { RootState } from '../store';
-import { ThunkAction, Action } from '@reduxjs/toolkit'; // Import ThunkAction and Action from '@reduxjs/toolkit'
-import { Dispatch } from 'redux';
+import { AppThunk } from '../store';
+import { toast } from 'react-toastify';
 
-interface User {
-  email: string;
-  token: string;
-}
+const API_URL = 'https://reqres.in/api';
 
 interface AuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-  loading: boolean;
+  token: string | null;
   error: string | null;
+  loading: boolean;
 }
 
 const initialState: AuthState = {
-  user: null,
-  isAuthenticated: false,
-  loading: false,
+  token: null,
   error: null,
+  loading: false,
 };
 
-export const authSlice = createSlice({
+const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<{ email: string; token: string }>) => {
-      state.user = action.payload;
-      state.isAuthenticated = true;
-      state.loading = false;
-      state.error = null;
-    },
-    clearUser: state => {
-      state.user = null;
-      state.isAuthenticated = false;
-      state.loading = false;
-      state.error = null;
-    },
-    setLoading: state => {
+    setLoading(state) {
       state.loading = true;
     },
-    setError: (state, action: PayloadAction<string>) => {
+    setUser(state, action: PayloadAction<{ token: string }>) {
+      state.token = action.payload.token;
+      state.loading = false;
+    },
+    setError(state, action: PayloadAction<string>) {
       state.error = action.payload;
       state.loading = false;
     },
   },
 });
 
-export const { setUser, clearUser, setLoading, setError } = authSlice.actions;
+export const { setLoading, setUser, setError } = authSlice.actions;
 
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
-
-
-export const login = (email: string, password: string) => async (dispatch: Dispatch) => {
+export const loginUser = (email: string, password: string): AppThunk => async (dispatch) => {
   dispatch(setLoading());
   try {
-    const response = await axios.post('https://reqres.in/api/login', { email, password });
-    console.log(response);
-    // Dispatch setUser action if needed
+    const response = await axios.post(`${API_URL}/login`, { email, password });
+    dispatch(setUser({ token: response.data.token }));
   } catch (error) {
-    dispatch(setError((error as Error).message));
-    throw new Error((error as Error).message);
+    const errorMessage = (error as Error).message;
+    dispatch(setError(errorMessage));
+    toast.error(errorMessage);
   }
 };
 
-
-// export const login = (email: string, password: string): AppThunk<void> => async dispatch => {
-//   dispatch(setLoading());
-//   try {
-//     const response = await axios.post('https://reqres.in/api/login', { email, password });
-//     if (response.status === 200) {
-//       dispatch(setUser({ email, token: response.data.token }));
-//     } else {
-//       dispatch(setError('Login failed'));
-//     }
-//   } catch (error) {
-//     dispatch(setError((error as Error).message));
-//   }
-// };
-
-export const register = (email: string, password: string) => async (dispatch: Dispatch) => {
+export const registerUser = (email: string, password: string): AppThunk => async (dispatch) => {
   dispatch(setLoading());
   try {
-    const response = await axios.post('https://reqres.in/api/register', { email, password });
-    console.log(response);
-    // Dispatch setUser action if needed
+    const response = await axios.post(`${API_URL}/register`, { email, password });
+    dispatch(setUser({ token: response.data.token }));
   } catch (error) {
-    dispatch(setError((error as Error).message));
-    throw new Error((error as Error).message);
+    const errorMessage = (error as Error).message;
+    dispatch(setError(errorMessage));
+    toast.error(errorMessage);
   }
-};
-
-
-export const logout = (): AppThunk => async dispatch => {
-  dispatch(clearUser());
 };
 
 export default authSlice.reducer;

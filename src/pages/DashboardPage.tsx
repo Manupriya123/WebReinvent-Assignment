@@ -1,7 +1,14 @@
-// DashboardPage.tsx
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const DashboardPage: React.FC = () => {
+  const token = useSelector((state: RootState) => state.auth.token);
+
+  if (!token) {
+    return <div>Access Denied</div>;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md">
